@@ -37,7 +37,21 @@ const getCryptoName = (symbol: string): string => {
     'MANAUSDT': 'Decentraland',
     'AXSUSDT': 'Axie Infinity',
     'THETAUSDT': 'Theta Network',
-    'EOSUSDT': 'EOS'
+    'EOSUSDT': 'EOS',
+    // Nuevos nombres agregados
+    'ARUSDT': 'Arweave',
+    'STORJUSDT': 'Storj',
+    'GALAUSDT': 'Gala',
+    'ROSEUSDT': 'Oasis Network',
+    'ARBUSDT': 'Arbitrum',
+    'HNTUSDT': 'Helium',
+    'KAVAUSDT': 'Kava',
+    'MKRUSDT': 'Maker',
+    'COMPUSDT': 'Compound',
+    'FETUSDT': 'Fetch.ai',
+    'SCRTUSDT': 'Secret',
+    'RNDRUSDT': 'Render Token',
+    'AKTUSDT': 'Akash Network'
   };
   return names[symbol] || symbol.replace('USDT', '');
 };

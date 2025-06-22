@@ -7,13 +7,17 @@ const MAIN_CRYPTOS = [
   'SOLUSDT', 'TRXUSDT', 'DOTUSDT', 'LTCUSDT'
 ];
 
-// Cryptos adicionales para la cinta deslizante
+// Cryptos adicionales para la cinta deslizante (expandida con nuevos tickets)
 const TICKER_CRYPTOS = [
   'DOGEUSDT', 'MATICUSDT', 'AVAXUSDT', 'LINKUSDT', 'ATOMUSDT',
   'UNIUSDT', 'ETCUSDT', 'XLMUSDT', 'BCHUSDT', 'FILUSDT',
   'APTUSDT', 'NEARUSDT', 'ALGOUSDT', 'VETUSDT', 'ICPUSDT',
   'FTMUSDT', 'SANDUSDT', 'MANAUSDT', 'AXSUSDT', 'THETAUSDT',
-  'EOSUSDT'
+  'EOSUSDT',
+  // Nuevos tickets agregados
+  'ARUSDT', 'STORJUSDT', 'GALAUSDT', 'ROSEUSDT', 'ARBUSDT',
+  'HNTUSDT', 'KAVAUSDT', 'MKRUSDT', 'COMPUSDT', 'FETUSDT',
+  'SCRTUSDT', 'RNDRUSDT', 'AKTUSDT'
 ];
 
 export const useCryptoData = () => {
