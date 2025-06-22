@@ -88,11 +88,11 @@ export const CryptoTicker: React.FC<CryptoTickerProps> = ({ cryptos }) => {
   const getSpeedClass = () => {
     switch (speedLevel) {
       case 1:
-        return 'animate-scroll'; // 60s (normal)
+        return 'animate-scroll'; // 60s (1x - normal)
       case 2:
-        return 'animate-scroll-fast'; // 30s (fast)
+        return 'animate-scroll-fast'; // 15s (4x - fast)
       case 3:
-        return 'animate-scroll-very-fast'; // 15s (very fast)
+        return 'animate-scroll-very-fast'; // 7.5s (8x - very fast)
       default:
         return 'animate-scroll';
     }
@@ -103,9 +103,9 @@ export const CryptoTicker: React.FC<CryptoTickerProps> = ({ cryptos }) => {
       case 1:
         return '1x';
       case 2:
-        return '2x';
-      case 3:
         return '4x';
+      case 3:
+        return '8x';
       default:
         return '1x';
     }

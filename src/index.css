@@ -17,11 +17,11 @@
 }
 
 .animate-scroll-fast {
-  animation: scroll 30s linear infinite;
+  animation: scroll 15s linear infinite;
 }
 
 .animate-scroll-very-fast {
-  animation: scroll 15s linear infinite;
+  animation: scroll 7.5s linear infinite;
 }
 
 /* Pausa la animación al hacer hover */
