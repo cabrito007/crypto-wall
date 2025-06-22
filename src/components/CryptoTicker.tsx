@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { TrendingUp, TrendingDown, ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
+import React, { useState } from 'react';
+import { TrendingUp, TrendingDown, ChevronRight } from 'lucide-react';
 import { CryptoData } from '../types/crypto';
 
 interface CryptoTickerProps {
@@ -76,33 +76,39 @@ const formatChange = (change: string): string => {
 };
 
 export const CryptoTicker: React.FC<CryptoTickerProps> = ({ cryptos }) => {
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [currentOffset, setCurrentOffset] = useState(0);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [maxOffset, setMaxOffset] = useState(0);
+  const [speedLevel, setSpeedLevel] = useState(1); // 1 = normal, 2 = fast, 3 = very fast
 
   // Duplicamos los cryptos para crear un loop infinito
   const duplicatedCryptos = [...cryptos, ...cryptos];
 
-  // Calcular el offset máximo basado en el contenido
-  useEffect(() => {
-    if (scrollContainerRef.current) {
-      const containerWidth = scrollContainerRef.current.offsetWidth;
-      const contentWidth = duplicatedCryptos.length * 300; // 300px por item aproximadamente
-      setMaxOffset(Math.max(0, contentWidth - containerWidth));
+  const handleSpeedIncrease = () => {
+    setSpeedLevel(prev => prev === 3 ? 1 : prev + 1);
+  };
+
+  const getSpeedClass = () => {
+    switch (speedLevel) {
+      case 1:
+        return 'animate-scroll'; // 60s (normal)
+      case 2:
+        return 'animate-scroll-fast'; // 30s (fast)
+      case 3:
+        return 'animate-scroll-very-fast'; // 15s (very fast)
+      default:
+        return 'animate-scroll';
     }
-  }, [duplicatedCryptos.length]);
-
-  const handlePrevious = () => {
-    setCurrentOffset(prev => Math.max(0, prev - 300));
   };
 
-  const handleNext = () => {
-    setCurrentOffset(prev => Math.min(maxOffset, prev + 300));
-  };
-
-  const togglePlayPause = () => {
-    setIsPlaying(!isPlaying);
+  const getSpeedLabel = () => {
+    switch (speedLevel) {
+      case 1:
+        return '1x';
+      case 2:
+        return '2x';
+      case 3:
+        return '4x';
+      default:
+        return '1x';
+    }
   };
 
   return (
@@ -114,16 +120,7 @@ export const CryptoTicker: React.FC<CryptoTickerProps> = ({ cryptos }) => {
         <div className="absolute right-0 top-0 w-20 h-full bg-gradient-to-l from-black to-transparent z-20 pointer-events-none"></div>
         
         {/* Cinta deslizante */}
-        <div 
-          ref={scrollContainerRef}
-          className={`flex transition-transform duration-500 ease-out ${
-            isPlaying ? 'animate-scroll' : ''
-          }`}
-          style={{
-            transform: `translateX(-${currentOffset}px)`,
-            animationPlayState: isPlaying ? 'running' : 'paused'
-          }}
-        >
+        <div className={`flex ${getSpeedClass()}`}>
           {duplicatedCryptos.map((crypto, index) => {
             const isPositive = parseFloat(crypto.priceChangePercent) >= 0;
             const changeColor = isPositive ? 'text-green-400' : 'text-red-500';
@@ -175,56 +172,28 @@ export const CryptoTicker: React.FC<CryptoTickerProps> = ({ cryptos }) => {
         </div>
       </div>
 
-      {/* Controles de navegación */}
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <button
-          onClick={handlePrevious}
-          disabled={currentOffset === 0}
-          className="p-3 bg-black/80 hover:bg-black/90 border border-gray-600/50 hover:border-gray-500 rounded-full backdrop-blur-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-110 shadow-2xl"
-        >
-          <ChevronLeft className="w-5 h-5 text-white" />
-        </button>
-      </div>
-
+      {/* Control de velocidad - Solo flecha derecha */}
       <div className="absolute right-4 top-1/2 -translate-y-1/2 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <button
-          onClick={handleNext}
-          disabled={currentOffset >= maxOffset}
-          className="p-3 bg-black/80 hover:bg-black/90 border border-gray-600/50 hover:border-gray-500 rounded-full backdrop-blur-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-110 shadow-2xl"
+          onClick={handleSpeedIncrease}
+          className="flex items-center gap-2 p-3 bg-black/90 hover:bg-red-500/20 border border-gray-600/50 hover:border-red-500/50 rounded-full backdrop-blur-md transition-all duration-300 hover:scale-110 shadow-2xl group/speed"
         >
-          <ChevronRight className="w-5 h-5 text-white" />
+          <ChevronRight className="w-5 h-5 text-white group-hover/speed:text-red-400 transition-colors duration-300" />
+          <span className="text-xs font-bold text-white group-hover/speed:text-red-400 transition-colors duration-300 min-w-[20px]">
+            {getSpeedLabel()}
+          </span>
         </button>
       </div>
 
-      {/* Control de play/pause */}
-      <div className="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <button
-          onClick={togglePlayPause}
-          className="p-2 bg-black/80 hover:bg-black/90 border border-gray-600/50 hover:border-gray-500 rounded-lg backdrop-blur-md transition-all duration-300 hover:scale-110 shadow-xl"
-        >
-          {isPlaying ? (
-            <Pause className="w-4 h-4 text-white" />
-          ) : (
-            <Play className="w-4 h-4 text-white" />
-          )}
-        </button>
-      </div>
-
-      {/* Indicador de posición */}
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <div className="flex items-center gap-2 px-3 py-1 bg-black/60 rounded-full backdrop-blur-sm">
-          <div className="flex gap-1">
-            {Array.from({ length: Math.ceil(maxOffset / 300) + 1 }).map((_, index) => (
-              <div
-                key={index}
-                className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
-                  Math.floor(currentOffset / 300) === index ? 'bg-red-500' : 'bg-gray-600'
-                }`}
-              />
-            ))}
-          </div>
-          <span className="text-xs text-gray-400 font-mono ml-2">
-            {Math.floor(currentOffset / 300) + 1}/{Math.ceil(maxOffset / 300) + 1}
+      {/* Indicador de velocidad en la esquina superior derecha */}
+      <div className="absolute top-3 right-3 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-black/80 border border-gray-600/50 rounded-lg backdrop-blur-sm">
+          <div className={`w-2 h-2 rounded-full ${
+            speedLevel === 1 ? 'bg-green-400' : 
+            speedLevel === 2 ? 'bg-yellow-400' : 'bg-red-400'
+          } animate-pulse`}></div>
+          <span className="text-xs text-white font-bold">
+            Speed {getSpeedLabel()}
           </span>
         </div>
       </div>
